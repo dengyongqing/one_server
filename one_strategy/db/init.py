@@ -5,21 +5,29 @@ import pandas as pd
 import numpy as np
 import tushare as ts
 import time,sched
+import schedule
+import time
 
-def init(request):
-    while True:  
-      print 'time: ', time.time()  
-      time.sleep(3600) 
-      engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
-      # ts.get_stock_basics()
-      temp = ts.get_stock_basics()
-      data = pd.DataFrame(temp)
+def job():
+    print("I'm working...")
+    # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
+    engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
+    # ts.get_stock_basics()
+    temp = ts.get_stock_basics()
+    data = pd.DataFrame(temp)
     
-      try:
-          data.to_sql('stock_basics',engine,index=False,if_exists='append')
-          # return HttpResponse(json.dumps(temp))
-      except Exception as e:
-          print(e)
+    try:
+        data.to_sql('stock_basics',engine,index=False,if_exists='append')
+    except Exception as e:
+        print(e)
 
-def worker(msg, starttime):
-    print "time:", time.time(), "msg", msg, 'startTime', starttime
+schedule.every(10).seconds.do(job)
+# schedule.every(10).minutes.do(job)
+# schedule.every().hour.do(job)
+# schedule.every().day.at("10:30").do(job)
+# schedule.every().monday.do(job)
+# schedule.every().wednesday.at("13:15").do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
