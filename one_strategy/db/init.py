@@ -16,7 +16,7 @@ def init(request):
 
 def job():
     print("I'm working...")
-    engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
+    engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
     # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
     # engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
     try:
