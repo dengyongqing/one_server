@@ -10,14 +10,14 @@ import time
 
 def job():
     print("I'm working...")
-    # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
-    engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
+    engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
+    # engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
     # ts.get_stock_basics()
     temp = ts.get_stock_basics()
     data = pd.DataFrame(temp)
     
     try:
-        data.to_sql('stock_basics',engine,index=False,if_exists='append')
+        data.to_sql('stock_basics',engine,index=False,if_exists='replace')
     except Exception as e:
         print(e)
 
