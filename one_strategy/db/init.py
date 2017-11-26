@@ -8,25 +8,77 @@ import tushare as ts
 import time,sched
 import schedule
 import time
+import datetime
+
+now = datetime.datetime.now()
+year = now.strftime('%Y')  
+today = now.strftime('%Y-%m-%d')  
 
 def init(request):
     # ts.get_stock_basics()
     schedule.clear()
     return HttpResponse('clear all task')
 
-# 基本面数据
-def job():
+# 交易数据
+def job_1():
+    # 股票列表
+    stock_basics = ts.get_stock_basics()
+    data = pd.DataFrame(stock_basics)
+    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    print("股票列表......done")
+
+# 投资参考数据
+def job_2():
+    # 分配预案
+    profit_data = ts.profit_data(year, top=1000)
+    data = pd.DataFrame(profit_data)
+    data.to_sql('profit_data',engine,index=False,if_exists='replace')
+    print("分配预案......done")
+
+    # 业绩预告
+    forecast_data = ts.forecast_data(year,1)
+    data = pd.DataFrame(forecast_data)
+    data.to_sql('forecast_data',engine,index=False,if_exists='replace')
+    print("业绩预告......done")
+
+    # 限售股解禁
+    xsg_data = ts.xsg_data()
+    data = pd.DataFrame(xsg_data)
+    data.to_sql('xsg_data',engine,index=False,if_exists='replace')
+    print("限售股解禁......done")
+
+    # 基金持股
+    fund_holdings = ts.fund_holdings(year, 1)
+    data = pd.DataFrame(fund_holdings)
+    data.to_sql('fund_holdings',engine,index=False,if_exists='replace')
+    print("基金持股......done")
+    
+    # 新股数据
+    new_stocks = ts.new_stocks()
+    data = pd.DataFrame(new_stocks)
+    data.to_sql('new_stocks',engine,index=False,if_exists='replace')
+    print("新股数据......done")
+
+    # 融资融券（沪市）
+    sh_margins = ts.sh_margins()
+    data = pd.DataFrame(sh_margins)
+    data.to_sql('sh_margins',engine,index=False,if_exists='replace')
+    print("融资融券（沪市）......done")
+
+    # 融资融券（深市）
+    sz_margins = ts.sz_margins()
+    data = pd.DataFrame(sz_margins)
+    data.to_sql('sz_margins',engine,index=False,if_exists='replace')
+    print("融资融券（深市）......done")
+
+# 股票分类数据
+def job_3():
     print("I'm working......基本面数据")
     engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
     # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
     # engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
     try:
-        # 股票列表
-        stock_basics = ts.get_stock_basics()
-        data = pd.DataFrame(stock_basics)
-        data.to_sql('stock_basics',engine,index=False,if_exists='replace')
-        print("股票列表......done")
-
+        
         # 行业分类
         industry_classified = ts.get_industry_classified()
         data = pd.DataFrame(industry_classified)
@@ -95,8 +147,16 @@ def job():
     except Exception as e:
         print(e)
 
+# 基本面数据
+def job_4():
+    # 股票列表
+    stock_basics = ts.get_stock_basics()
+    data = pd.DataFrame(stock_basics)
+    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    print("股票列表......done")
+
 # 宏观经济数据
-def job_1():
+def job_5():
     try:
         # 存款利率
         deposit_rate = ts.get_deposit_rate()
@@ -172,10 +232,129 @@ def job_1():
 
     except Exception as e:
         print(e)
-# schedule.every(60).seconds.do(job)
-schedule.every(10).minutes.do(job)
-# schedule.every(1).hour.do(job)
-# schedule.every().day.at("17:00").do(job)
+
+# 新闻事件数据
+def job_6():
+    # 即时新闻
+    latest_news = ts.get_latest_news()
+    data = pd.DataFrame(latest_news)
+    data.to_sql('latest_news',engine,index=False,if_exists='replace')
+    print("即时新闻......done")
+
+    # 信息地雷
+    notices = ts.get_notices()
+    data = pd.DataFrame(notices)
+    data.to_sql('notices',engine,index=False,if_exists='replace')
+    print("信息地雷......done")
+
+    # 新浪股吧
+    guba_sina = ts.guba_sina()
+    data = pd.DataFrame(guba_sina)
+    data.to_sql('guba_sina',engine,index=False,if_exists='replace')
+    print("新浪股吧......done")
+
+
+# 龙虎榜数据
+def job_7():
+    # 每日龙虎榜列表
+    top_list = ts.top_list(today)
+    data = pd.DataFrame(top_list)
+    data.to_sql('top_list',engine,index=False,if_exists='replace')
+    print("每日龙虎榜列表......done")
+
+    # 个股上榜统计
+    cap_tops = ts.cap_tops()
+    data = pd.DataFrame(cap_tops)
+    data.to_sql('cap_tops',engine,index=False,if_exists='replace')
+    print("个股上榜统计......done")
+
+    # 营业部上榜统计
+    broker_tops = ts.broker_tops()
+    data = pd.DataFrame(broker_tops)
+    data.to_sql('broker_tops',engine,index=False,if_exists='replace')
+    print("营业部上榜统计......done")
+
+    # 机构席位追踪
+    inst_tops = ts.inst_tops()
+    data = pd.DataFrame(inst_tops)
+    data.to_sql('inst_tops',engine,index=False,if_exists='replace')
+    print("机构席位追踪......done")
+
+    # 机构成交明细
+    inst_detail = ts.inst_detail()
+    data = pd.DataFrame(inst_detail)
+    data.to_sql('inst_detail',engine,index=False,if_exists='replace')
+    print("机构成交明细......done")
+
+# 银行间同业拆放利率
+def job_8():
+    # Shibor拆放利率
+    shibor_data = ts.shibor_data()
+    data = pd.DataFrame(shibor_data)
+    data.to_sql('shibor_data',engine,index=False,if_exists='replace')
+    print("银行间同业拆放利率......done")
+
+    # 银行报价数据
+    shibor_quote_data = ts.shibor_quote_data()
+    data = pd.DataFrame(shibor_quote_data)
+    data.to_sql('shibor_quote_data',engine,index=False,if_exists='replace')
+    print("银行报价数据......done")
+
+    # Shibor均值数据
+    shibor_ma_data = ts.shibor_ma_data()
+    data = pd.DataFrame(shibor_ma_data)
+    data.to_sql('shibor_ma_data',engine,index=False,if_exists='replace')
+    print("Shibor均值数据......done")
+
+    # 贷款基础利率（LPR）
+    lpr_data = ts.lpr_data()
+    data = pd.DataFrame(lpr_data)
+    data.to_sql('lpr_data',engine,index=False,if_exists='replace')
+    print("贷款基础利率......done")
+
+    # LPR均值数据
+    lpr_ma_data = ts.lpr_ma_data()
+    data = pd.DataFrame(lpr_ma_data)
+    data.to_sql('lpr_ma_data',engine,index=False,if_exists='replace')
+    print("LPR均值数据......done")
+
+# 电影票房
+def job_9():
+    # 实时票房
+    realtime_boxoffice = ts.realtime_boxoffice()
+    data = pd.DataFrame(realtime_boxoffice)
+    data.to_sql('realtime_boxoffice',engine,index=False,if_exists='replace')
+    print("实时票房......done")
+
+    # 每日票房
+    day_boxoffice = ts.day_boxoffice()
+    data = pd.DataFrame(day_boxoffice)
+    data.to_sql('day_boxoffice',engine,index=False,if_exists='replace')
+    print("每日票房......done")
+
+    # 月度票房
+    month_boxoffice = ts.month_boxoffice()
+    data = pd.DataFrame(month_boxoffice)
+    data.to_sql('month_boxoffice',engine,index=False,if_exists='replace')
+    print("月度票房......done")
+
+    # 影院日度票房
+    day_cinema = ts.day_cinema()
+    data = pd.DataFrame(day_cinema)
+    data.to_sql('day_cinema',engine,index=False,if_exists='replace')
+    print("影院日度票房......done")
+
+  
+schedule.every(10).minutes.do(job_1)
+schedule.every(1).hour.do(job_2)
+schedule.every(1).hour.do(job_3)
+schedule.every(1).hour.do(job_4)
+schedule.every(1).hour.do(job_5)
+
+schedule.every(1).hour.do(job_6)
+schedule.every(1).hour.do(job_7)
+schedule.every(1).hour.do(job_8)
+schedule.every().day.at("17:00").do(job_9)
 # schedule.every().monday.do(job)
 # schedule.every().wednesday.at("13:15").do(job)
 
