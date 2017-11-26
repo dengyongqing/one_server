@@ -14,6 +14,8 @@ now = datetime.datetime.now()
 year = now.strftime('%Y')  
 today = now.strftime('%Y-%m-%d')  
 
+engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
+
 def init(request):
     # ts.get_stock_basics()
     schedule.clear()
@@ -21,6 +23,7 @@ def init(request):
 
 # 交易数据
 def job_1():
+    print("I'm working......交易数据")
     # 股票列表
     stock_basics = ts.get_stock_basics()
     data = pd.DataFrame(stock_basics)
@@ -29,6 +32,8 @@ def job_1():
 
 # 投资参考数据
 def job_2():
+    
+    print("I'm working......投资参考数据")
     # 分配预案
     profit_data = ts.profit_data(year, top=1000)
     data = pd.DataFrame(profit_data)
@@ -73,8 +78,8 @@ def job_2():
 
 # 股票分类数据
 def job_3():
-    print("I'm working......基本面数据")
-    engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
+    print("I'm working......股票分类数据")
+    # engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
     # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
     # engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
     try:
@@ -149,6 +154,7 @@ def job_3():
 
 # 基本面数据
 def job_4():
+    print("I'm working......基本面数据")
     # 股票列表
     stock_basics = ts.get_stock_basics()
     data = pd.DataFrame(stock_basics)
@@ -158,6 +164,7 @@ def job_4():
 # 宏观经济数据
 def job_5():
     try:
+        print("I'm working......宏观经济数据")
         # 存款利率
         deposit_rate = ts.get_deposit_rate()
         data = pd.DataFrame(deposit_rate)
@@ -235,6 +242,7 @@ def job_5():
 
 # 新闻事件数据
 def job_6():
+    print("I'm working......新闻事件数据")
     # 即时新闻
     latest_news = ts.get_latest_news()
     data = pd.DataFrame(latest_news)
@@ -256,6 +264,7 @@ def job_6():
 
 # 龙虎榜数据
 def job_7():
+    print("I'm working......龙虎榜数据")
     # 每日龙虎榜列表
     top_list = ts.top_list(today)
     data = pd.DataFrame(top_list)
@@ -288,6 +297,7 @@ def job_7():
 
 # 银行间同业拆放利率
 def job_8():
+    print("I'm working......银行间同业拆放利率")
     # Shibor拆放利率
     shibor_data = ts.shibor_data()
     data = pd.DataFrame(shibor_data)
@@ -320,6 +330,7 @@ def job_8():
 
 # 电影票房
 def job_9():
+    print("I'm working......电影票房")
     # 实时票房
     realtime_boxoffice = ts.realtime_boxoffice()
     data = pd.DataFrame(realtime_boxoffice)
