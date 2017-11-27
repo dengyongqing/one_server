@@ -14,12 +14,7 @@ now = datetime.datetime.now()
 year = now.strftime('%Y')  
 today = now.strftime('%Y-%m-%d')  
 
-engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
-
-def init(request):
-    # ts.get_stock_basics()
-    schedule.clear()
-    return HttpResponse('clear all task')
+engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
 
 # 交易数据
 def job_1():
@@ -29,6 +24,26 @@ def job_1():
     data = pd.DataFrame(stock_basics)
     data.to_sql('stock_basics',engine,index=False,if_exists='replace')
     print("股票列表......done")
+
+    for index, row in data.iterrows():   # 获取每行的index、row
+        # for col_name in data.columns:
+        print("开始获取行情数据......" + row.name)
+        get_hist_data = ts.get_hist_data(row.name)
+        myData = pd.DataFrame(get_hist_data)
+        data.to_sql('hist_data',engine,index=False,if_exists='replace')
+        print("成功写入行情数据......" + row.name)
+
+    # 实时行情
+    # today_all = ts.get_today_all()
+    # data = pd.DataFrame(today_all)
+    # data.to_sql('today_all',engine,index=False,if_exists='replace')
+    # print("实时行情......done")
+
+    # # 大盘指数行情列表
+    # get_index = df = ts.get_index()
+    # data = pd.DataFrame(get_index)
+    # data.to_sql('get_index',engine,index=False,if_exists='replace')
+    # print("大盘指数行情列表......done")
 
 # 投资参考数据
 def job_2():
@@ -155,11 +170,48 @@ def job_3():
 # 基本面数据
 def job_4():
     print("I'm working......基本面数据")
+
     # 股票列表
     stock_basics = ts.get_stock_basics()
     data = pd.DataFrame(stock_basics)
     data.to_sql('stock_basics',engine,index=False,if_exists='replace')
     print("股票列表......done")
+
+    # 业绩报告（主表）
+    report_data = ts.get_report_data(year,1)
+    data = pd.DataFrame(report_data)
+    data.to_sql('report_data',engine,index=False,if_exists='replace')
+    print("业绩报告（主表）......done")
+
+    # 盈利能力
+    profit_data = ts.get_profit_data(year,1)
+    data = pd.DataFrame(profit_data)
+    data.to_sql('profit_data',engine,index=False,if_exists='replace')
+    print("盈利能力......done")
+
+    # 营运能力
+    operation_data = ts.get_operation_data(year,1)
+    data = pd.DataFrame(operation_data)
+    data.to_sql('operation_data',engine,index=False,if_exists='replace')
+    print("营运能力......done")
+
+    # 成长能力
+    growth_data = ts.get_growth_data(year,1)
+    data = pd.DataFrame(growth_data)
+    data.to_sql('growth_data',engine,index=False,if_exists='replace')
+    print("成长能力......done")
+
+    # 偿债能力
+    debtpaying_data = ts.get_debtpaying_data(year,1)
+    data = pd.DataFrame(debtpaying_data)
+    data.to_sql('debtpaying_data',engine,index=False,if_exists='replace')
+    print("偿债能力......done")
+
+    # 现金流量
+    cashflow_data = ts.get_cashflow_data(year,1)
+    data = pd.DataFrame(cashflow_data)
+    data.to_sql('cashflow_data',engine,index=False,if_exists='replace')
+    print("现金流量......done")
 
 # 宏观经济数据
 def job_5():
@@ -357,21 +409,37 @@ def job_9():
 
   
 schedule.every(10).minutes.do(job_1)
-schedule.every(1).hour.do(job_2)
-schedule.every(1).hour.do(job_3)
-schedule.every(1).hour.do(job_4)
-schedule.every(1).hour.do(job_5)
+schedule.every(10).minutes.do(job_2)
+schedule.every(10).minutes.do(job_3)
+schedule.every(10).minutes.do(job_4)
+schedule.every(10).minutes.do(job_5)
+schedule.every(10).minutes.do(job_6)
+schedule.every(10).minutes.do(job_7)
+schedule.every(10).minutes.do(job_8)
+schedule.every(10).minutes.do(job_9)
 
-schedule.every(1).hour.do(job_6)
-schedule.every(1).hour.do(job_7)
-schedule.every(1).hour.do(job_8)
-schedule.every().day.at("17:00").do(job_9)
+# schedule.every(1).hour.do(job_2)
+# schedule.every(1).hour.do(job_3)
+# schedule.every(1).hour.do(job_4)
+# schedule.every(1).hour.do(job_5)
+
+# schedule.every(1).hour.do(job_6)
+# schedule.every(1).hour.do(job_7)
+# schedule.every(1).hour.do(job_8)
+# schedule.every().day.at("17:00").do(job_9)
+
 # schedule.every().monday.do(job)
 # schedule.every().wednesday.at("13:15").do(job)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
 
 # def worker(msg, starttime):
 #     print "time:", time.time(), "msg", msg, 'startTime', starttime
+
+job_1();
+def init(request):
+    # ts.get_stock_basics()
+    schedule.clear()
+    return HttpResponse('clear all task')
