@@ -13,44 +13,40 @@ import Queue
 import threading
 
 now = datetime.datetime.now()
-year = int(now.strftime('%Y'))  
+year = now.strftime('%Y')  
 today = now.strftime('%Y-%m-%d')  
 
-engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare') 
+engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
 
 # 交易数据
 def job_1():
-    try:
-        print("I'm working......交易数据")
-        # 股票列表
-        stock_basics = ts.get_stock_basics()
-        data = pd.DataFrame(stock_basics)
-        data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    print("I'm working......交易数据")
+    # 股票列表
+    stock_basics = ts.get_stock_basics()
+    data = pd.DataFrame(stock_basics)
+    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    print("股票列表......done")
 
-        for index, row in data.iterrows():   # 获取每行的index、row
-            if_exists = 'append'
-            if index == 0: 
-                if_exists = 'replace'
-            # for col_name in data.columns:
-            print("开始获取行情数据......" + row.name)
-            get_hist_data = ts.get_hist_data(row.name)
-            myData = pd.DataFrame(get_hist_data)
-            data.to_sql('hist_data',engine,index=False,if_exists=if_exists)
-            print("成功写入行情数据......" + row.name)
+    for index, row in data.iterrows():   # 获取每行的index、row
+        # for col_name in data.columns:
+        print("开始获取行情数据......" + row.name)
+        get_hist_data = ts.get_hist_data(row.name)
+        myData = pd.DataFrame(get_hist_data)
+        data.to_sql('hist_data',engine,index=False,if_exists='append')
+        print("成功写入行情数据......" + row.name)
 
-        # 实时行情
-        # today_all = ts.get_today_all()
-        # data = pd.DataFrame(today_all)
-        # data.to_sql('today_all',engine,index=False,if_exists='replace')
-        # print("实时行情......done")
+    # 实时行情
+    # today_all = ts.get_today_all()
+    # data = pd.DataFrame(today_all)
+    # data.to_sql('today_all',engine,index=False,if_exists='replace')
+    # print("实时行情......done")
 
-        # # 大盘指数行情列表
-        # get_index = df = ts.get_index()
-        # data = pd.DataFrame(get_index)
-        # data.to_sql('get_index',engine,index=False,if_exists='replace')
-        # print("大盘指数行情列表......done")
-    except Exception as e:
-        print(e)
+    # # 大盘指数行情列表
+    # get_index = df = ts.get_index()
+    # data = pd.DataFrame(get_index)
+    # data.to_sql('get_index',engine,index=False,if_exists='replace')
+    # print("大盘指数行情列表......done")
+
 # 投资参考数据
 def job_2():
     
@@ -414,25 +410,12 @@ def job_9():
 
 # 开始任务
 def start():
-    print("I'm working......start")
     work()
 
 # 结束任务
 def stop():
-    print("I'm working......stop")
-    schedule.clear('my_job')
-
-def work():
-    print("I'm working......work")
-    schedule.every().day.at("17:00").do(job_1).tag('my_job')
-    schedule.every().day.at("17:00").do(job_2).tag('my_job')
-    schedule.every().day.at("17:00").do(job_3).tag('my_job')
-    schedule.every().day.at("17:00").do(job_4).tag('my_job')
-    schedule.every().day.at("17:00").do(job_5).tag('my_job')
-    schedule.every().day.at("17:00").do(job_6).tag('my_job')
-    schedule.every().day.at("17:00").do(job_7).tag('my_job')
-    schedule.every().day.at("17:00").do(job_8).tag('my_job')
-    schedule.every().day.at("17:00").do(job_9).tag('my_job')
+    schedule.clear()
+    work()
 
 def worker_main():
     while 1:
@@ -441,22 +424,45 @@ def worker_main():
 
 jobqueue = Queue.Queue()
 
-# worker_thread = threading.Thread(target=worker_main)
-# worker_thread.start()
+def run_threaded(job_func):
+     job_thread = threading.Thread(target=job_func)
+     job_thread.start()
 
-job_1()
-job_2()
-job_3()
-job_4()
-job_5()
-job_6()
-job_7()
-job_8()
-job_9()
+def work():
+    schedule.every().day.at("17:00").do(jobqueue.put, job_1)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_2)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_3)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_4)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_5)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_6)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_7)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_8)
+    schedule.every().day.at("17:00").do(jobqueue.put, job_9)
 
-while 1:
+start()
+schedule.every().day.at("19:00").do(stop)
+
+worker_thread = threading.Thread(target=worker_main)
+worker_thread.start()
+
+# schedule.every(10).minutes.do(job_1)
+# schedule.every().day.at("17:00").do(job_9)
+# schedule.every().monday.do(job)
+# schedule.every().wednesday.at("13:15").do(job)
+
+while True:
     schedule.run_pending()
     time.sleep(1)
+
+# job_1();
+# job_2();
+# job_3();
+# job_4();
+# job_5();
+# job_6();
+# job_7();
+# job_8();
+# job_9();
 
 def init(request):
     # ts.get_stock_basics()
