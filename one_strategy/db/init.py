@@ -22,7 +22,7 @@ def job_1():
     # 股票列表
     stock_basics = ts.get_stock_basics()
     data = pd.DataFrame(stock_basics)
-    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    data.to_sql('stock_basics',engine,index=False,if_exists='append')
     print("股票列表......done")
 
     for index, row in data.iterrows():   # 获取每行的index、row
