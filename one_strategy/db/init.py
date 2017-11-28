@@ -17,6 +17,7 @@ year = int(now.strftime('%Y'))
 today = now.strftime('%Y-%m-%d')  
 
 engine = create_engine('postgresql://postgres:142857@localhost:5432/tushare') 
+# engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
 
 # 交易数据
 def job_1():
@@ -184,10 +185,10 @@ def job_4():
     print("股票列表......done")
 
     # 业绩报告（主表）
-    report_data = ts.get_report_data(year,1)
-    data = pd.DataFrame(report_data)
-    data.to_sql('report_data',engine,index=False,if_exists='replace')
-    print("业绩报告（主表）......done")
+    # report_data = ts.get_report_data(year,1)
+    # data = pd.DataFrame(report_data)
+    # data.to_sql('report_data',engine,index=False,if_exists='replace')
+    # print("业绩报告（主表）......done")
 
     # 盈利能力
     profit_data = ts.get_profit_data(year,1)
@@ -452,7 +453,7 @@ job_6()
 job_7()
 job_8()
 job_9()
-job_1()
+# job_1()
 
 while 1:
     schedule.run_pending()
