@@ -36,7 +36,7 @@ def job_1():
             print("开始获取行情数据......" + row.name)
             get_hist_data = ts.get_hist_data(row.name)
             myData = pd.DataFrame(get_hist_data)
-            data.to_sql('hist_data',engine,index=False,if_exists=if_exists)
+            get_hist_data.to_sql('hist_data',engine,index=False,if_exists=if_exists)
             print("成功写入行情数据......" + row.name)
 
         # 实时行情
@@ -54,58 +54,55 @@ def job_1():
         print(e)
 # 投资参考数据
 def job_2():
+    try:
+        print("I'm working......投资参考数据")
+        # 分配预案
+        profit_data = ts.profit_data(year, top=1000)
+        data = pd.DataFrame(profit_data)
+        data.to_sql('profit_data',engine,index=False,if_exists='replace')
+        print("分配预案......done")
+
+        # 业绩预告
+        forecast_data = ts.forecast_data(year,1)
+        data = pd.DataFrame(forecast_data)
+        data.to_sql('forecast_data',engine,index=False,if_exists='replace')
+        print("业绩预告......done")
+
+        # 限售股解禁
+        xsg_data = ts.xsg_data()
+        data = pd.DataFrame(xsg_data)
+        data.to_sql('xsg_data',engine,index=False,if_exists='replace')
+        print("限售股解禁......done")
+
+        # 基金持股
+        fund_holdings = ts.fund_holdings(year, 1)
+        data = pd.DataFrame(fund_holdings)
+        data.to_sql('fund_holdings',engine,index=False,if_exists='replace')
+        print("基金持股......done")
     
-    print("I'm working......投资参考数据")
-    # 分配预案
-    profit_data = ts.profit_data(year, top=1000)
-    data = pd.DataFrame(profit_data)
-    data.to_sql('profit_data',engine,index=False,if_exists='replace')
-    print("分配预案......done")
+        # 新股数据
+        new_stocks = ts.new_stocks()
+        data = pd.DataFrame(new_stocks)
+        data.to_sql('new_stocks',engine,index=False,if_exists='replace')
+        print("新股数据......done")
 
-    # 业绩预告
-    forecast_data = ts.forecast_data(year,1)
-    data = pd.DataFrame(forecast_data)
-    data.to_sql('forecast_data',engine,index=False,if_exists='replace')
-    print("业绩预告......done")
+        # 融资融券（沪市）
+        sh_margins = ts.sh_margins()
+        data = pd.DataFrame(sh_margins)
+        data.to_sql('sh_margins',engine,index=False,if_exists='replace')
+        print("融资融券（沪市）......done")
 
-    # 限售股解禁
-    xsg_data = ts.xsg_data()
-    data = pd.DataFrame(xsg_data)
-    data.to_sql('xsg_data',engine,index=False,if_exists='replace')
-    print("限售股解禁......done")
-
-    # 基金持股
-    fund_holdings = ts.fund_holdings(year, 1)
-    data = pd.DataFrame(fund_holdings)
-    data.to_sql('fund_holdings',engine,index=False,if_exists='replace')
-    print("基金持股......done")
-    
-    # 新股数据
-    new_stocks = ts.new_stocks()
-    data = pd.DataFrame(new_stocks)
-    data.to_sql('new_stocks',engine,index=False,if_exists='replace')
-    print("新股数据......done")
-
-    # 融资融券（沪市）
-    sh_margins = ts.sh_margins()
-    data = pd.DataFrame(sh_margins)
-    data.to_sql('sh_margins',engine,index=False,if_exists='replace')
-    print("融资融券（沪市）......done")
-
-    # 融资融券（深市）
-    sz_margins = ts.sz_margins()
-    data = pd.DataFrame(sz_margins)
-    data.to_sql('sz_margins',engine,index=False,if_exists='replace')
-    print("融资融券（深市）......done")
-
+        # 融资融券（深市）
+        sz_margins = ts.sz_margins()
+        data = pd.DataFrame(sz_margins)
+        data.to_sql('sz_margins',engine,index=False,if_exists='replace')
+        print("融资融券（深市）......done")
+    except Exception as e:
+        print(e)
 # 股票分类数据
 def job_3():
-    print("I'm working......股票分类数据")
-    # engine = create_engine('postgresql://postgres@localhost:5432/tushare') 
-    # engine = create_engine('postgresql://tushare@localhost:5432/tushare') 
-    # engine = create_engine('postgresql://postgres@47.93.193.128:5432/tushare')
     try:
-        
+        print("I'm working......股票分类数据")
         # 行业分类
         industry_classified = ts.get_industry_classified()
         data = pd.DataFrame(industry_classified)
@@ -176,50 +173,52 @@ def job_3():
 
 # 基本面数据
 def job_4():
-    print("I'm working......基本面数据")
+    try:
+        print("I'm working......基本面数据")
 
-    # 业绩报告（主表）
-    report_data = ts.get_report_data(year,1)
-    data = pd.DataFrame(report_data)
-    data.to_sql('report_data',engine,index=False,if_exists='replace')
-    print("业绩报告（主表）......done")
+        # 业绩报告（主表）
+        report_data = ts.get_report_data(year,1)
+        data = pd.DataFrame(report_data)
+        data.to_sql('report_data',engine,index=False,if_exists='replace')
+        print("业绩报告（主表）......done")
 
-    # 盈利能力
-    profit_data = ts.get_profit_data(year,1)
-    data = pd.DataFrame(profit_data)
-    data.to_sql('profit_data',engine,index=False,if_exists='replace')
-    print("盈利能力......done")
+        # 盈利能力
+        profit_data = ts.get_profit_data(year,1)
+        data = pd.DataFrame(profit_data)
+        data.to_sql('profit_data',engine,index=False,if_exists='replace')
+        print("盈利能力......done")
 
-    # 营运能力
-    operation_data = ts.get_operation_data(year,1)
-    data = pd.DataFrame(operation_data)
-    data.to_sql('operation_data',engine,index=False,if_exists='replace')
-    print("营运能力......done")
+        # 营运能力
+        operation_data = ts.get_operation_data(year,1)
+        data = pd.DataFrame(operation_data)
+        data.to_sql('operation_data',engine,index=False,if_exists='replace')
+        print("营运能力......done")
 
-    # 成长能力
-    growth_data = ts.get_growth_data(year,1)
-    data = pd.DataFrame(growth_data)
-    data.to_sql('growth_data',engine,index=False,if_exists='replace')
-    print("成长能力......done")
+        # 成长能力
+        growth_data = ts.get_growth_data(year,1)
+        data = pd.DataFrame(growth_data)
+        data.to_sql('growth_data',engine,index=False,if_exists='replace')
+        print("成长能力......done")
 
-    # 偿债能力
-    debtpaying_data = ts.get_debtpaying_data(year,1)
-    data = pd.DataFrame(debtpaying_data)
-    data.to_sql('debtpaying_data',engine,index=False,if_exists='replace')
-    print("偿债能力......done")
+        # 偿债能力
+        debtpaying_data = ts.get_debtpaying_data(year,1)
+        data = pd.DataFrame(debtpaying_data)
+        data.to_sql('debtpaying_data',engine,index=False,if_exists='replace')
+        print("偿债能力......done")
 
-    # 现金流量
-    cashflow_data = ts.get_cashflow_data(year,1)
-    data = pd.DataFrame(cashflow_data)
-    data.to_sql('cashflow_data',engine,index=False,if_exists='replace')
-    print("现金流量......done")
+        # 现金流量
+        cashflow_data = ts.get_cashflow_data(year,1)
+        data = pd.DataFrame(cashflow_data)
+        data.to_sql('cashflow_data',engine,index=False,if_exists='replace')
+        print("现金流量......done")
 
-    # 股票列表
-    stock_basics = ts.get_stock_basics()
-    data = pd.DataFrame(stock_basics)
-    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
-    print("股票列表......done")
-
+        # 股票列表
+        stock_basics = ts.get_stock_basics()
+        data = pd.DataFrame(stock_basics)
+        data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+        print("股票列表......done")
+    except Exception as e:
+        print(e)
 # 宏观经济数据
 def job_5():
     try:
@@ -301,118 +300,126 @@ def job_5():
 
 # 新闻事件数据
 def job_6():
-    print("I'm working......新闻事件数据")
-    # 即时新闻
-    latest_news = ts.get_latest_news()
-    data = pd.DataFrame(latest_news)
-    data.to_sql('latest_news',engine,index=False,if_exists='replace')
-    print("即时新闻......done")
+    try:
+        print("I'm working......新闻事件数据")
+        # 即时新闻
+        latest_news = ts.get_latest_news()
+        data = pd.DataFrame(latest_news)
+        data.to_sql('latest_news',engine,index=False,if_exists='replace')
+        print("即时新闻......done")
 
-    # 信息地雷
-    notices = ts.get_notices()
-    data = pd.DataFrame(notices)
-    data.to_sql('notices',engine,index=False,if_exists='replace')
-    print("信息地雷......done")
+        # 信息地雷
+        notices = ts.get_notices()
+        data = pd.DataFrame(notices)
+        data.to_sql('notices',engine,index=False,if_exists='replace')
+        print("信息地雷......done")
 
-    # 新浪股吧
-    guba_sina = ts.guba_sina()
-    data = pd.DataFrame(guba_sina)
-    data.to_sql('guba_sina',engine,index=False,if_exists='replace')
-    print("新浪股吧......done")
-
+        # 新浪股吧
+        guba_sina = ts.guba_sina()
+        data = pd.DataFrame(guba_sina)
+        data.to_sql('guba_sina',engine,index=False,if_exists='replace')
+        print("新浪股吧......done")
+    except Exception as e:
+        print(e)
 # 龙虎榜数据
 def job_7():
-    print("I'm working......龙虎榜数据")
-    # 每日龙虎榜列表
-    top_list = ts.top_list(today)
-    data = pd.DataFrame(top_list)
-    data.to_sql('top_list',engine,index=False,if_exists='replace')
-    print("每日龙虎榜列表......done")
+    try:
+        print("I'm working......龙虎榜数据")
+        # 每日龙虎榜列表
+        top_list = ts.top_list(today)
+        data = pd.DataFrame(top_list)
+        data.to_sql('top_list',engine,index=False,if_exists='replace')
+        print("每日龙虎榜列表......done")
 
-    # 个股上榜统计
-    cap_tops = ts.cap_tops()
-    data = pd.DataFrame(cap_tops)
-    data.to_sql('cap_tops',engine,index=False,if_exists='replace')
-    print("个股上榜统计......done")
+        # 个股上榜统计
+        cap_tops = ts.cap_tops()
+        data = pd.DataFrame(cap_tops)
+        data.to_sql('cap_tops',engine,index=False,if_exists='replace')
+        print("个股上榜统计......done")
 
-    # 营业部上榜统计
-    broker_tops = ts.broker_tops()
-    data = pd.DataFrame(broker_tops)
-    data.to_sql('broker_tops',engine,index=False,if_exists='replace')
-    print("营业部上榜统计......done")
+        # 营业部上榜统计
+        broker_tops = ts.broker_tops()
+        data = pd.DataFrame(broker_tops)
+        data.to_sql('broker_tops',engine,index=False,if_exists='replace')
+        print("营业部上榜统计......done")
 
-    # 机构席位追踪
-    inst_tops = ts.inst_tops()
-    data = pd.DataFrame(inst_tops)
-    data.to_sql('inst_tops',engine,index=False,if_exists='replace')
-    print("机构席位追踪......done")
+        # 机构席位追踪
+        inst_tops = ts.inst_tops()
+        data = pd.DataFrame(inst_tops)
+        data.to_sql('inst_tops',engine,index=False,if_exists='replace')
+        print("机构席位追踪......done")
 
-    # 机构成交明细
-    inst_detail = ts.inst_detail()
-    data = pd.DataFrame(inst_detail)
-    data.to_sql('inst_detail',engine,index=False,if_exists='replace')
-    print("机构成交明细......done")
-
+        # 机构成交明细
+        inst_detail = ts.inst_detail()
+        data = pd.DataFrame(inst_detail)
+        data.to_sql('inst_detail',engine,index=False,if_exists='replace')
+        print("机构成交明细......done")
+    except Exception as e:
+        print(e)
 # 银行间同业拆放利率
 def job_8():
-    print("I'm working......银行间同业拆放利率")
-    # Shibor拆放利率
-    shibor_data = ts.shibor_data()
-    data = pd.DataFrame(shibor_data)
-    data.to_sql('shibor_data',engine,index=False,if_exists='replace')
-    print("银行间同业拆放利率......done")
+    try:
+        print("I'm working......银行间同业拆放利率")
+        # Shibor拆放利率
+        shibor_data = ts.shibor_data()
+        data = pd.DataFrame(shibor_data)
+        data.to_sql('shibor_data',engine,index=False,if_exists='replace')
+        print("银行间同业拆放利率......done")
 
-    # 银行报价数据
-    shibor_quote_data = ts.shibor_quote_data()
-    data = pd.DataFrame(shibor_quote_data)
-    data.to_sql('shibor_quote_data',engine,index=False,if_exists='replace')
-    print("银行报价数据......done")
+        # 银行报价数据
+        shibor_quote_data = ts.shibor_quote_data()
+        data = pd.DataFrame(shibor_quote_data)
+        data.to_sql('shibor_quote_data',engine,index=False,if_exists='replace')
+        print("银行报价数据......done")
 
-    # Shibor均值数据
-    shibor_ma_data = ts.shibor_ma_data()
-    data = pd.DataFrame(shibor_ma_data)
-    data.to_sql('shibor_ma_data',engine,index=False,if_exists='replace')
-    print("Shibor均值数据......done")
+        # Shibor均值数据
+        shibor_ma_data = ts.shibor_ma_data()
+        data = pd.DataFrame(shibor_ma_data)
+        data.to_sql('shibor_ma_data',engine,index=False,if_exists='replace')
+        print("Shibor均值数据......done")
 
-    # 贷款基础利率（LPR）
-    lpr_data = ts.lpr_data()
-    data = pd.DataFrame(lpr_data)
-    data.to_sql('lpr_data',engine,index=False,if_exists='replace')
-    print("贷款基础利率......done")
+        # 贷款基础利率（LPR）
+        lpr_data = ts.lpr_data()
+        data = pd.DataFrame(lpr_data)
+        data.to_sql('lpr_data',engine,index=False,if_exists='replace')
+        print("贷款基础利率......done")
 
-    # LPR均值数据
-    lpr_ma_data = ts.lpr_ma_data()
-    data = pd.DataFrame(lpr_ma_data)
-    data.to_sql('lpr_ma_data',engine,index=False,if_exists='replace')
-    print("LPR均值数据......done")
-
+        # LPR均值数据
+        lpr_ma_data = ts.lpr_ma_data()
+        data = pd.DataFrame(lpr_ma_data)
+        data.to_sql('lpr_ma_data',engine,index=False,if_exists='replace')
+        print("LPR均值数据......done")
+    except Exception as e:
+        print(e)
 # 电影票房
 def job_9():
-    print("I'm working......电影票房")
-    # 实时票房
-    realtime_boxoffice = ts.realtime_boxoffice()
-    data = pd.DataFrame(realtime_boxoffice)
-    data.to_sql('realtime_boxoffice',engine,index=False,if_exists='replace')
-    print("实时票房......done")
+    try:
+        print("I'm working......电影票房")
+        # 实时票房
+        realtime_boxoffice = ts.realtime_boxoffice()
+        data = pd.DataFrame(realtime_boxoffice)
+        data.to_sql('realtime_boxoffice',engine,index=False,if_exists='replace')
+        print("实时票房......done")
 
-    # 每日票房
-    day_boxoffice = ts.day_boxoffice()
-    data = pd.DataFrame(day_boxoffice)
-    data.to_sql('day_boxoffice',engine,index=False,if_exists='replace')
-    print("每日票房......done")
+        # 每日票房
+        day_boxoffice = ts.day_boxoffice()
+        data = pd.DataFrame(day_boxoffice)
+        data.to_sql('day_boxoffice',engine,index=False,if_exists='replace')
+        print("每日票房......done")
 
-    # 月度票房
-    month_boxoffice = ts.month_boxoffice()
-    data = pd.DataFrame(month_boxoffice)
-    data.to_sql('month_boxoffice',engine,index=False,if_exists='replace')
-    print("月度票房......done")
+        # 月度票房
+        month_boxoffice = ts.month_boxoffice()
+        data = pd.DataFrame(month_boxoffice)
+        data.to_sql('month_boxoffice',engine,index=False,if_exists='replace')
+        print("月度票房......done")
 
-    # 影院日度票房
-    day_cinema = ts.day_cinema()
-    data = pd.DataFrame(day_cinema)
-    data.to_sql('day_cinema',engine,index=False,if_exists='replace')
-    print("影院日度票房......done")
-
+        # 影院日度票房
+        day_cinema = ts.day_cinema()
+        data = pd.DataFrame(day_cinema)
+        data.to_sql('day_cinema',engine,index=False,if_exists='replace')
+        print("影院日度票房......done")
+    except Exception as e:
+        print(e)
 # 开始任务
 def start():
     print("I'm working......start")
@@ -424,16 +431,19 @@ def stop():
     schedule.clear('my_job')
 
 def work():
-    print("I'm working......work")
-    schedule.every().day.at("17:00").do(job_2).tag('my_job')
-    schedule.every().day.at("17:00").do(job_3).tag('my_job')
-    schedule.every().day.at("17:00").do(job_4).tag('my_job')
-    schedule.every().day.at("17:00").do(job_5).tag('my_job')
-    schedule.every().day.at("17:00").do(job_6).tag('my_job')
-    schedule.every().day.at("17:00").do(job_7).tag('my_job')
-    schedule.every().day.at("17:00").do(job_8).tag('my_job')
-    schedule.every().day.at("17:00").do(job_9).tag('my_job')
-    schedule.every().day.at("17:00").do(job_1).tag('my_job')
+    try:
+        print("I'm working......work")
+        schedule.every().day.at("17:00").do(job_2).tag('my_job')
+        schedule.every().day.at("17:00").do(job_3).tag('my_job')
+        schedule.every().day.at("17:00").do(job_4).tag('my_job')
+        schedule.every().day.at("17:00").do(job_5).tag('my_job')
+        schedule.every().day.at("17:00").do(job_6).tag('my_job')
+        schedule.every().day.at("17:00").do(job_7).tag('my_job')
+        schedule.every().day.at("17:00").do(job_8).tag('my_job')
+        schedule.every().day.at("17:00").do(job_9).tag('my_job')
+        schedule.every().day.at("17:00").do(job_1).tag('my_job')
+    except Exception as e:
+        print(e)
 
 def worker_main():
     while 1:
@@ -445,15 +455,16 @@ jobqueue = Queue.Queue()
 # worker_thread = threading.Thread(target=worker_main)
 # worker_thread.start()
 
+job_1()
 job_2()
 job_3()
-# job_4()
+job_4()
 job_5()
 job_6()
 job_7()
 job_8()
 job_9()
-job_1()
+
 
 while 1:
     schedule.run_pending()
