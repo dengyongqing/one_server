@@ -16,7 +16,7 @@ now = datetime.datetime.now()
 year = int(now.strftime('%Y'))  
 today = now.strftime('%Y-%m-%d')  
 
-engine = create_engine('postgresql://postgres:142857@47.93.193.128:5432/tushare') 
+engine = create_engine('postgresql://postgres:142857@localhost:5432/tushare') 
 
 # 交易数据
 def job_1():
@@ -424,7 +424,6 @@ def stop():
 
 def work():
     print("I'm working......work")
-    schedule.every().day.at("17:00").do(job_1).tag('my_job')
     schedule.every().day.at("17:00").do(job_2).tag('my_job')
     schedule.every().day.at("17:00").do(job_3).tag('my_job')
     schedule.every().day.at("17:00").do(job_4).tag('my_job')
@@ -433,6 +432,7 @@ def work():
     schedule.every().day.at("17:00").do(job_7).tag('my_job')
     schedule.every().day.at("17:00").do(job_8).tag('my_job')
     schedule.every().day.at("17:00").do(job_9).tag('my_job')
+    schedule.every().day.at("17:00").do(job_1).tag('my_job')
 
 def worker_main():
     while 1:
