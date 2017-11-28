@@ -178,17 +178,11 @@ def job_3():
 def job_4():
     print("I'm working......基本面数据")
 
-    # 股票列表
-    stock_basics = ts.get_stock_basics()
-    data = pd.DataFrame(stock_basics)
-    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
-    print("股票列表......done")
-
     # 业绩报告（主表）
-    # report_data = ts.get_report_data(year,1)
-    # data = pd.DataFrame(report_data)
-    # data.to_sql('report_data',engine,index=False,if_exists='replace')
-    # print("业绩报告（主表）......done")
+    report_data = ts.get_report_data(year,1)
+    data = pd.DataFrame(report_data)
+    data.to_sql('report_data',engine,index=False,if_exists='replace')
+    print("业绩报告（主表）......done")
 
     # 盈利能力
     profit_data = ts.get_profit_data(year,1)
@@ -219,6 +213,12 @@ def job_4():
     data = pd.DataFrame(cashflow_data)
     data.to_sql('cashflow_data',engine,index=False,if_exists='replace')
     print("现金流量......done")
+
+    # 股票列表
+    stock_basics = ts.get_stock_basics()
+    data = pd.DataFrame(stock_basics)
+    data.to_sql('stock_basics',engine,index=False,if_exists='replace')
+    print("股票列表......done")
 
 # 宏观经济数据
 def job_5():
@@ -453,7 +453,7 @@ job_6()
 job_7()
 job_8()
 job_9()
-# job_1()
+job_1()
 
 while 1:
     schedule.run_pending()
