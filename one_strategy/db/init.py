@@ -27,10 +27,10 @@ def job_1():
         stock_basics = ts.get_stock_basics()
         data = pd.DataFrame(stock_basics)
         data.to_sql('stock_basics',engine,index=False,if_exists='replace')
-
+        count = 1;
         for index, row in data.iterrows():   # 获取每行的index、row
             if_exists = 'append'
-            if index == 0: 
+            if count == 1: 
                 if_exists = 'replace'
             # for col_name in data.columns:
             print("开始获取行情数据......" + row.name)
@@ -38,6 +38,7 @@ def job_1():
             myData = pd.DataFrame(get_hist_data)
             get_hist_data.to_sql('hist_data',engine,index=False,if_exists=if_exists)
             print("成功写入行情数据......" + row.name)
+            count += 1
 
         # 实时行情
         # today_all = ts.get_today_all()
