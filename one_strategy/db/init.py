@@ -444,7 +444,6 @@ jobqueue = Queue.Queue()
 # worker_thread = threading.Thread(target=worker_main)
 # worker_thread.start()
 
-job_1()
 job_2()
 job_3()
 job_4()
@@ -453,6 +452,7 @@ job_6()
 job_7()
 job_8()
 job_9()
+job_1()
 
 while 1:
     schedule.run_pending()
