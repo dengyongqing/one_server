@@ -16,8 +16,8 @@ now = datetime.datetime.now()
 year = int(now.strftime('%Y'))  
 today = now.strftime('%Y-%m-%d')  
 
-# engine = create_engine('postgresql://postgres:142857@localhost:5432/tushare') 
-engine = create_engine('postgresql://tushare@localhost:5432/tushare')
+engine = create_engine('postgresql://postgres:142857@localhost:5432/tushare') 
+# engine = create_engine('postgresql://tushare@localhost:5432/tushare')
 # 交易数据
 def job_1():
     try:
