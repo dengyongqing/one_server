@@ -16,11 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 # import db.init as init
-import codes as v
+# import codes as v
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^one$', v.hello),
+    # url(r'^one$', v.hello),
     # url(r'^init$', init.init),
 ]
