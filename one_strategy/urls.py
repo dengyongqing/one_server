@@ -18,13 +18,14 @@ from django.contrib import admin
 
 from django.conf import settings
 from django.conf.urls.static import static
-
-# import db.init as init
+from one_strategy.controllers.happy import happy
+# from one_strategy.db.init import init
 # import codes as v
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^happy', happy),
     # url(r'^one$', v.hello),
     # url(r'^init$', init.init),
 ]
