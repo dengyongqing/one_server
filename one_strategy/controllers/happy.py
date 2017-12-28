@@ -22,6 +22,7 @@ def happy(request):
     code = request.GET.get('code')
     print(request.get_host())
     temp_run(code, 0)
+
     return HttpResponseRedirect('http://' + request.get_host() + '/static/' + code + ".png")
     # return HttpResponse('http://localhost:7777/static/' + code + ".png")
 
