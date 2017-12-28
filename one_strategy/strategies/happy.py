@@ -13,8 +13,6 @@ import json
 import random
 import sys, os
 
-os.chdir("/work/one_data/")
-
 # 上证（XSHG）和深圳（XSHE）交易的证券以及港股（XHKG）
 # 在这个方法中编写任何的初始化逻辑。context对象将会在你的算法策略的任何方法之间做传递。
 def init(context):

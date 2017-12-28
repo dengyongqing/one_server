@@ -30,7 +30,7 @@ def temp_run(code, flag):
     year = int(now.strftime('%Y'))  
     today = now.strftime('%Y-%m-%d')  
     now = now.strftime("%Y-%m-%d %H:%M:%S")
-    os.chdir("/work/one_data/")
+
     strategy_file_path = "./one_strategy/strategies/happy.py"
 
     engine = get_db_connect()
