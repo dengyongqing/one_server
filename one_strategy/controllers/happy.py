@@ -18,13 +18,13 @@ import tushare as ts
 import pandas as pd
 
 def happy(request):
-    print(request.get_host())
     code = request.GET.get('code')
-    print(request.get_host())
-    temp_run(code, 0)
-
-    return HttpResponseRedirect('http://' + request.get_host() + '/static/' + code + ".png")
-    # return HttpResponse('http://localhost:7777/static/' + code + ".png")
+    if os.path.exists('./static/' + code + ".png"):
+        return HttpResponseRedirect('http://' + request.get_host() + '/static/' + code + ".png")
+    else:
+        temp_run(code, 0)
+        return HttpResponseRedirect('http://' + request.get_host() + '/static/' + code + ".png")
+        # return HttpResponse('http://localhost:7777/static/' + code + ".png")
 
 def temp_run(code, flag):
     now = datetime.datetime.now()
@@ -42,7 +42,6 @@ def temp_run(code, flag):
     #       print(data.iat[0])
     data = data[data['code'] == code]
     obj_dict = data.iloc[-1]
-    print(obj_dict.esp)
     temp_context = {'esp': obj_dict.esp, 'code': add_tag(code)}
 
     config = {
