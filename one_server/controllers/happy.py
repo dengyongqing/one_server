@@ -6,13 +6,15 @@ from rqalpha import run_func
 from rqalpha.utils import scheduler
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from one_strategy.strategies.happy import *
-from one_strategy.db.db import get_db_connect
 
+from one_server.one_strategy.strategies.happy import *
+from one_server.db.db import get_db_connect
+from django.conf import settings
+
+import sys, os
 import schedule
 import time
 import datetime
-import sys, os
 import gc
 import tushare as ts
 import pandas as pd
@@ -32,7 +34,7 @@ def temp_run(code, flag):
     today = now.strftime('%Y-%m-%d')  
     now = now.strftime("%Y-%m-%d %H:%M:%S")
 
-    strategy_file_path = "./one_strategy/strategies/happy.py"
+    strategy_file_path = "./one_server/strategies/happy.py"
 
     engine = get_db_connect()
     read_sql_query = pd.read_sql_query('select * from my_stocks',con = engine)
@@ -42,7 +44,7 @@ def temp_run(code, flag):
     #       print(data.iat[0])
     data = data[data['code'] == code]
     obj_dict = data.iloc[-1]
-    temp_context = {'esp': obj_dict.esp, 'code': add_tag(code)}
+    temp_context = {'esp': obj_dict.esp, 'code': add_tag(code), 'projectName': settings.PROJECT_NAME}
 
     config = {
       "base": {

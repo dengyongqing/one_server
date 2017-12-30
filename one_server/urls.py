@@ -1,4 +1,4 @@
-"""one_strategy URL Configuration
+"""one_server URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -18,8 +18,8 @@ from django.contrib import admin
 
 from django.conf import settings
 from django.conf.urls.static import static
-from one_strategy.controllers.happy import happy
-# from one_strategy.db.init import init
+from one_server.controllers.happy import happy
+# from one_server.db.init import init
 # import codes as v
 
 
